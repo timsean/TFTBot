@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<champ_list>
+<champ>
+    <name>Aatrox</name>
+    <cost>3</cost>
+    <synergy>Light</synergy>
+    <synergy>Blademaster</synergy>
+</champ>
+<champ>
+    <name>Amumu</name>
+    <cost>5</cost>
+    <synergy>Inferno</synergy>
+    <synergy>Warden</synergy>
+</champ>
+<champ>
+    <name>Annie</name>
+    <cost>4</cost>
+    <synergy>Inferno</synergy>
+    <synergy>Summoner</synergy>
+</champ>
+</champ_list>
