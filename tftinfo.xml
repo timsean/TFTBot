@@ -18,4 +18,315 @@
     <synergy>Inferno</synergy>
     <synergy>Summoner</synergy>
 </champ>
+<champ>
+    <name>Ashe</name>
+    <cost>4</cost>
+    <synergy>Crystal</synergy>
+    <synergy>Ranger</synergy>
+</champ>
+<champ>
+    <name>Azir</name>
+    <cost>3</cost>
+    <synergy>Desert</synergy>
+    <synergy>Summoner</synergy>
+</champ>
+<champ>
+    <name>Brand</name>
+    <cost>4</cost>
+    <synergy>Inferno</synergy>
+    <synergy>Mage</synergy>
+</champ>
+<champ>
+    <name>Braum</name>
+    <cost>2</cost>
+    <synergy>Glacial</synergy>
+    <synergy>Warden</synergy>
+</champ>
+<champ>
+    <name>Diana</name>
+    <cost>1</cost>
+    <synergy>Inferno</synergy>
+    <synergy>Assassin</synergy>
+</champ>
+<champ>
+    <name>Dr.Mundo</name>
+    <cost>3</cost>
+    <synergy>Poison</synergy>
+    <synergy>Berserker</synergy>
+</champ>
+<champ>
+    <name>Ezreal</name>
+    <cost>3</cost>
+    <synergy>Glacial</synergy>
+    <synergy>Ranger</synergy>
+</champ>
+<champ>
+    <name>Ivern</name>
+    <cost>1</cost>
+    <synergy>Woodland</synergy>
+    <synergy>Druid</synergy>
+</champ>
+<champ>
+    <name>Janna</name>
+    <cost>4</cost>
+    <synergy>Cloud</synergy>
+    <synergy>Mystic</synergy>
+</champ>
+<champ>
+    <name>Jax</name>
+    <cost>2</cost>
+    <synergy>Light</synergy>
+    <synergy>Berserker</synergy>
+</champ>
+<champ>
+    <name>Kha'Zix</name>
+    <cost>4</cost>
+    <synergy>Desert</synergy>
+    <synergy>Assassin</synergy>
+</champ>
+<champ>
+    <name>Kindred</name>
+    <cost>3</cost>
+    <synergy>Shadow</synergy>
+    <synergy>Inferno</synergy>
+    <synergy>Ranger</synergy>
+</champ>
+<champ>
+    <name>Kog'Maw</name>
+    <cost>1</cost>
+    <synergy>Poison</synergy>
+    <synergy>Predator</synergy>
+</champ>
+<champ>
+    <name>Leblanc</name>
+    <cost>2</cost>
+    <synergy>Woodland</synergy>
+    <synergy>Mage</synergy>
+    <synergy>Assassin</synergy>
+</champ>
+<champ>
+    <name>Lucian</name>
+    <cost>4</cost>
+    <synergy>Light</synergy>
+    <synergy>Soulbound</synergy>
+</champ>
+<champ>
+    <name>Lux</name>
+    <cost>7</cost>
+    <synergy>Variable</synergy>
+    <synergy>Avatar</synergy>
+</champ>
+<champ>
+    <name>Malphite</name>
+    <cost>4</cost>
+    <synergy>Mountain</synergy>
+    <synergy>Warden</synergy>
+</champ>
+<champ>
+    <name>Malzahar</name>
+    <cost>2</cost>
+    <synergy>Shadow</synergy>
+    <synergy>Summoner</synergy>
+</champ>
+<champ>
+    <name>Maokai</name>
+    <cost>1</cost>
+    <synergy>Woodland</synergy>
+    <synergy>Druid</synergy>
+</champ>
+<champ>
+    <name>Master Yi</name>
+    <cost>5</cost>
+    <synergy>Shadow</synergy>
+    <synergy>Mystic</synergy>
+    <synergy>Blademaster</synergy>
+</champ>
+<champ>
+    <name>Nami</name>
+    <cost>5</cost>
+    <synergy>Ocean</synergy>
+    <synergy>Mystic</synergy>
+</champ>
+<champ>
+    <name>Nasus</name>
+    <cost>1</cost>
+    <synergy>Light</synergy>
+    <synergy>Warden</synergy>
+</champ>
+<champ>
+    <name>Nautilus</name>
+    <cost>3</cost>
+    <synergy>Ocean</synergy>
+    <synergy>Warden</synergy>
+</champ>
+<champ>
+    <name>Neeko</name>
+    <cost>2</cost>
+    <synergy>Woodland</synergy>
+    <synergy>Druid</synergy>
+</champ>
+<champ>
+    <name>Nocturne</name>
+    <cost>3</cost>
+    <synergy>Steel</synergy>
+    <synergy>Assassin</synergy>
+</champ>
+<champ>
+    <name>Olaf</name>
+    <cost>4</cost>
+    <synergy>Glacial</synergy>
+    <synergy>Berserker</synergy>
+</champ>
+<champ>
+    <name>Ornn</name>
+    <cost>1</cost>
+    <synergy>Electric</synergy>
+    <synergy>Warden</synergy>
+</champ>
+<champ>
+    <name>Qiyana</name>
+    <cost>3</cost>
+    <synergy>Variable</synergy>
+    <synergy>Assassin</synergy>
+</champ>
+<champ>
+    <name>Rek'Sai</name>
+    <cost>2</cost>
+    <synergy>Steel</synergy>
+    <synergy>Predator</synergy>
+</champ>
+<champ>
+    <name>Renekton</name>
+    <cost>1</cost>
+    <synergy>Desert</synergy>
+    <synergy>Berserker</synergy>
+</champ>
+<champ>
+    <name>Senna</name>
+    <cost>2</cost>
+    <synergy>Shadow</synergy>
+    <synergy>Soulbound</synergy>
+</champ>
+<champ>
+    <name>Singed</name>
+    <cost>5</cost>
+    <synergy>Poison</synergy>
+    <synergy>Alchemist</synergy>
+</champ>
+<champ>
+    <name>Sion</name>
+    <cost>4</cost>
+    <synergy>Shadow</synergy>
+    <synergy>Berserker</synergy>
+</champ>
+<champ>
+    <name>Sivir</name>
+    <cost>3</cost>
+    <synergy>Desert</synergy>
+    <synergy>Blademaster</synergy>
+</champ>
+<champ>
+    <name>Skarner</name>
+    <cost>2</cost>
+    <synergy>Crystal</synergy>
+    <synergy>Predator</synergy>
+</champ>
+<champ>
+    <name>Soraka</name>
+    <cost>3</cost>
+    <synergy>Light</synergy>
+    <synergy>Mystic</synergy>
+</champ>
+<champ>
+    <name>Syndra</name>
+    <cost>2</cost>
+    <synergy>Ocean</synergy>
+    <synergy>Mage</synergy>
+</champ>
+<champ>
+    <name>Taliyah</name>
+    <cost>1</cost>
+    <synergy>Mountain</synergy>
+    <synergy>Mage</synergy>
+</champ>
+<champ>
+    <name>Taric</name>
+    <cost>5</cost>
+    <synergy>Crystal</synergy>
+    <synergy>Warden</synergy>
+</champ>
+<champ>
+    <name>Thresh</name>
+    <cost>2</cost>
+    <synergy>Ocean</synergy>
+    <synergy>Warden</synergy>
+</champ>
+<champ>
+    <name>Twitch</name>
+    <cost>4</cost>
+    <synergy>Poison</synergy>
+    <synergy>Ranger</synergy>
+</champ>
+<champ>
+    <name>Varus</name>
+    <cost>2</cost>
+    <synergy>Inferno</synergy>
+    <synergy>Ranger</synergy>
+</champ>
+<champ>
+    <name>Vayne</name>
+    <cost>1</cost>
+    <synergy>Light</synergy>
+    <synergy>Ranger</synergy>
+</champ>
+<champ>
+    <name>Veigar</name>
+    <cost>3</cost>
+    <synergy>Shadow</synergy>
+    <synergy>Mage</synergy>
+</champ>
+<champ>
+    <name>Vladimir</name>
+    <cost>3</cost>
+    <synergy>Ocean</synergy>
+    <synergy>Mage</synergy>
+</champ>
+<champ>
+    <name>Volibear</name>
+    <cost>2</cost>
+    <synergy>Electric</synergy>
+    <synergy>Glacial</synergy>
+    <synergy>Berserker</synergy>
+</champ>
+<champ>
+    <name>Warwick</name>
+    <cost>1</cost>
+    <synergy>Glacial</synergy>
+    <synergy>Predator</synergy>
+</champ>
+<champ>
+    <name>Yasuo</name>
+    <cost>2</cost>
+    <synergy>Cloud</synergy>
+    <synergy>Blademaster</synergy>
+</champ>
+<champ>
+    <name>Yorick</name>
+    <cost>4</cost>
+    <synergy>Light</synergy>
+    <synergy>Summoner</synergy>
+</champ>
+<champ>
+    <name>Zed</name>
+    <cost>5</cost>
+    <synergy>Electric</synergy>
+    <synergy>Summoner</synergy>
+    <synergy>Assassin</synergy>
+</champ>
+<champ>
+    <name>Zyra</name>
+    <cost>1</cost>
+    <synergy>Inferno</synergy>
+    <synergy>Summoner</synergy>
+</champ>
 </champ_list>
