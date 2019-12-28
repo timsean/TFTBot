@@ -258,13 +258,53 @@ def get_round(name):
 	w, h = round_crop.size
 	round_crop = round_crop.resize((w*5, h*5))
 	round_text = pytesseract.image_to_string(round_crop)
-	round_crop.save(str(name) + '_' + round_text + '.png', 'png')
+	#round_crop.save('images\\' + str(name) + '_' + round_text + '.png', 'png')
 	if len(round_text) >= 3:
 		round_num = round_text[0]
 		match_num = round_text[2]
 		return round_num, match_num
 	else:
 		return 0, 0
+
+def get_store_champs():
+	game_scr = grab_game_screen()
+	champ_names = ['','','','','']
+
+	crop_ul = (25.2,96.5)
+	crop_br = (32.2,98.9)
+	name_crop = crop_screen(game_scr, crop_ul, crop_br)
+	w, h = name_crop.size
+	name_crop = name_crop.resize((w*5, h*5))
+	champ_names[0] = pytesseract.image_to_string(name_crop)
+
+	crop_ul = (35.6,96.5)
+	crop_br = (42.6,98.9)
+	name_crop = crop_screen(game_scr, crop_ul, crop_br)
+	w, h = name_crop.size
+	name_crop = name_crop.resize((w*5, h*5))
+	champ_names[1] = pytesseract.image_to_string(name_crop)
+
+	crop_ul = (46.0,96.5)
+	crop_br = (53.0,98.9)
+	name_crop = crop_screen(game_scr, crop_ul, crop_br)
+	w, h = name_crop.size
+	name_crop = name_crop.resize((w*5, h*5))
+	champ_names[2] = pytesseract.image_to_string(name_crop)
+
+	crop_ul = (56.4,96.5)
+	crop_br = (63.4,98.9)
+	name_crop = crop_screen(game_scr, crop_ul, crop_br)
+	w, h = name_crop.size
+	name_crop = name_crop.resize((w*5, h*5))
+	champ_names[3] = pytesseract.image_to_string(name_crop)
+
+	crop_ul = (66.8,96.5)
+	crop_br = (73.8,98.9)
+	name_crop = crop_screen(game_scr, crop_ul, crop_br)
+	w, h = name_crop.size
+	name_crop = name_crop.resize((w*5, h*5))
+	champ_names[4] = pytesseract.image_to_string(name_crop)
+	return champ_names
 
 def checkIfProcessRunning(processName):
     '''
@@ -297,6 +337,7 @@ while True:
 		if check_planning() and not planning_done:
 			print('Planning start: buying champs')
 			print(get_round(stage))
+			print(get_store_champs())
 			buy_champ()
 			planning_done = True
 			stage = stage + 1
