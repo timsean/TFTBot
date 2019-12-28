@@ -2,9 +2,10 @@
 import pyautogui
 import psutil
 import time
-from PIL import Image
+from PIL import Image, ImageOps
 import pytesseract
 import win32gui
+import xml.dom.minidom
 
 pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
 
@@ -35,6 +36,8 @@ rounds_list = [\
 	['p', 'p', 'p', 'c', 'p', 'p', 'm'],\
 	['p', 'p', 'p', 'c', 'p', 'p', 'm'],\
 	['p', 'p', 'p', 'c', 'p', 'p', 'm']]
+
+champ_list = []
 
 def grab_client_screen():
 	global client_x, client_y, client_w, client_h
@@ -233,10 +236,11 @@ def check_gold():
 	crop_ul = (45,82)
 	crop_br = (48,84.3)
 	game_scr = grab_game_screen()
+	game_scr = ImageOps.invert(game_scr.convert('L'))
 	gold_crop = crop_screen(game_scr, crop_ul, crop_br)
 	w, h = gold_crop.size
 	gold_crop = gold_crop.resize((w*3, h*3))
-	gold_text = pytesseract.image_to_string(gold_crop, config='--psm 13 -c tessedit_char_whitelist=01234567890 ')
+	gold_text = pytesseract.image_to_string(gold_crop, config='--psm 13 -c tessedit_char_whitelist=0123456789 ')
 	return gold_text
 
 def check_planning():
@@ -254,6 +258,7 @@ def get_round(name):
 	crop_ul = (40.1,3.15)
 	crop_br = (42.4,5.25)
 	game_scr = grab_game_screen()
+	game_scr = ImageOps.invert(game_scr.convert('L'))
 	round_crop = crop_screen(game_scr, crop_ul, crop_br)
 	w, h = round_crop.size
 	round_crop = round_crop.resize((w*5, h*5))
@@ -266,44 +271,56 @@ def get_round(name):
 	else:
 		return 0, 0
 
+def get_champ_list():
+	global champ_list
+	doc = xml.dom.minidom.parse('tftinfo.xml')
+	names = doc.getElementsByTagName('name')
+	champ_list = [name.firstChild.data for name in names]
+
+def detect_champ_name(name_img):
+	global champ_list
+	scaler = 2
+	w, h = name_img.size
+	name_crop = name_img.resize((w*scaler, h*scaler))
+	detected_name = pytesseract.image_to_string(name_crop)
+	while detected_name not in champ_list:
+		if scaler == 6:
+			name_crop.save('images\\error.png', 'png')
+			return 'ERR'
+		scaler = scaler + 1
+		name_crop = name_img.resize((w*scaler, h*scaler))
+		detected_name = pytesseract.image_to_string(name_crop)
+	return detected_name
+
 def get_store_champs():
 	game_scr = grab_game_screen()
+	game_scr = ImageOps.invert(game_scr.convert('L'))
 	champ_names = ['','','','','']
 
-	crop_ul = (25.2,96.5)
+	crop_ul = (25.2,96.3)
 	crop_br = (32.2,98.9)
 	name_crop = crop_screen(game_scr, crop_ul, crop_br)
-	w, h = name_crop.size
-	name_crop = name_crop.resize((w*5, h*5))
-	champ_names[0] = pytesseract.image_to_string(name_crop)
+	champ_names[0] = detect_champ_name(name_crop)
 
-	crop_ul = (35.6,96.5)
+	crop_ul = (35.6,96.3)
 	crop_br = (42.6,98.9)
 	name_crop = crop_screen(game_scr, crop_ul, crop_br)
-	w, h = name_crop.size
-	name_crop = name_crop.resize((w*5, h*5))
-	champ_names[1] = pytesseract.image_to_string(name_crop)
+	champ_names[1] = detect_champ_name(name_crop)
 
-	crop_ul = (46.0,96.5)
+	crop_ul = (46.0,96.3)
 	crop_br = (53.0,98.9)
 	name_crop = crop_screen(game_scr, crop_ul, crop_br)
-	w, h = name_crop.size
-	name_crop = name_crop.resize((w*5, h*5))
-	champ_names[2] = pytesseract.image_to_string(name_crop)
+	champ_names[2] = detect_champ_name(name_crop)
 
-	crop_ul = (56.4,96.5)
+	crop_ul = (56.4,96.3)
 	crop_br = (63.4,98.9)
 	name_crop = crop_screen(game_scr, crop_ul, crop_br)
-	w, h = name_crop.size
-	name_crop = name_crop.resize((w*5, h*5))
-	champ_names[3] = pytesseract.image_to_string(name_crop)
+	champ_names[3] = detect_champ_name(name_crop)
 
-	crop_ul = (66.8,96.5)
+	crop_ul = (66.8,96.3)
 	crop_br = (73.8,98.9)
 	name_crop = crop_screen(game_scr, crop_ul, crop_br)
-	w, h = name_crop.size
-	name_crop = name_crop.resize((w*5, h*5))
-	champ_names[4] = pytesseract.image_to_string(name_crop)
+	champ_names[4] = detect_champ_name(name_crop)
 	return champ_names
 
 def checkIfProcessRunning(processName):
@@ -324,6 +341,7 @@ time.sleep(2)
 while True:
 	planning_done = False
 	stage = 0
+	get_champ_list()
 	grab_client_screen()
 	find_match()
 	accept_match()
