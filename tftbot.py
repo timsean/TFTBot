@@ -127,6 +127,7 @@ def accept_match():
 def surrender():
 	# Forfeit
 	global cursor_surrender
+	update_game_location()
 	pyautogui.press('enter')
 	pyautogui.press('/')
 	pyautogui.press('f')
@@ -135,7 +136,7 @@ def surrender():
 	time.sleep(0.5)
 	glob_x, glob_y = compute_global_coord_game(cursor_surrender[0], cursor_surrender[1])
 	pyautogui.mouseDown(x=glob_x, y=glob_y, button='left')
-	time.sleep(0.3)
+	time.sleep(0.05)
 	pyautogui.mouseUp(x=glob_x, y=glob_y, button='left')
 	time.sleep(20)
 
@@ -167,11 +168,12 @@ def check_notif():
 
 def level_up():
 	global cursor_level_up
+	update_game_location()
 	glob_x, glob_y = compute_global_coord_game(cursor_level_up[0], cursor_level_up[1])
 	pyautogui.mouseDown(x=glob_x, y=glob_y, button='left')
-	time.sleep(0.1)
+	time.sleep(0.05)
 	pyautogui.mouseUp(x=glob_x, y=glob_y, button='left')
-	time.sleep(0.3)
+	time.sleep(0.1)
 
 def full_level_up():
 	for i in range(0,10):
@@ -187,33 +189,33 @@ def buy_champ():
 
 	glob_x, glob_y = compute_global_coord_game(champ1[0], champ1[1])
 	pyautogui.mouseDown(x=glob_x, y=glob_y, button='left')
-	time.sleep(0.3)
+	time.sleep(0.05)
 	pyautogui.mouseUp(x=glob_x, y=glob_y, button='left')
-	time.sleep(0.5)
+	time.sleep(0.25)
 
 	glob_x, glob_y = compute_global_coord_game(champ2[0], champ2[1])
 	pyautogui.mouseDown(x=glob_x, y=glob_y, button='left')
-	time.sleep(0.3)
+	time.sleep(0.05)
 	pyautogui.mouseUp(x=glob_x, y=glob_y, button='left')
-	time.sleep(0.5)
+	time.sleep(0.25)
 
 	glob_x, glob_y = compute_global_coord_game(champ3[0], champ3[1])
 	pyautogui.mouseDown(x=glob_x, y=glob_y, button='left')
-	time.sleep(0.3)
+	time.sleep(0.05)
 	pyautogui.mouseUp(x=glob_x, y=glob_y, button='left')
-	time.sleep(0.5)
+	time.sleep(0.25)
 
 	glob_x, glob_y = compute_global_coord_game(champ4[0], champ4[1])
 	pyautogui.mouseDown(x=glob_x, y=glob_y, button='left')
-	time.sleep(0.3)
+	time.sleep(0.05)
 	pyautogui.mouseUp(x=glob_x, y=glob_y, button='left')
-	time.sleep(0.5)
+	time.sleep(0.25)
 
 	glob_x, glob_y = compute_global_coord_game(champ5[0], champ5[1])
 	pyautogui.mouseDown(x=glob_x, y=glob_y, button='left')
-	time.sleep(0.3)
+	time.sleep(0.05)
 	pyautogui.mouseUp(x=glob_x, y=glob_y, button='left')
-	time.sleep(0.5)
+	time.sleep(0.25)
 
 	# glob_x, glob_y = compute_global_coord_game(pet_home[0], pet_home[1])
 	# pyautogui.click(x=glob_x, y=glob_y, clicks=5, interval=0.1, button='right')
