@@ -89,13 +89,6 @@ def compute_global_coord_game(loc_x, loc_y):
 	glob_y = int(game_y + game_h*loc_y*0.01)
 	return glob_x, glob_y
 
-def find_match():
-	# Click the find match button
-	global cursor_find_match
-	glob_x, glob_y = compute_global_coord_client(cursor_find_match[0], cursor_find_match[1])
-	pyautogui.click(x=glob_x, y=glob_y, clicks=1, interval=0, button='left')
-	print('Finding match')
-
 def play_again():
 	# Click the play again button (same location as find match)
 	global cursor_find_match
@@ -112,15 +105,21 @@ def close_notif():
 	print('Closing notif')
 	time.sleep(5)
 
-def accept_match():
+def find_accept_match():
 	# Spam the accept match button until the actual game starts
-	global cursor_accept_match
-	glob_x, glob_y = compute_global_coord_client(cursor_accept_match[0], cursor_accept_match[1])
+	global cursor_accept_match, cursor_find_match
+	glob_x, glob_y = compute_global_coord_client(cursor_find_match[0], cursor_find_match[1])
+	pyautogui.click(x=glob_x, y=glob_y, clicks=1, interval=0, button='left')
+	print('Finding match')
 	match_not_found = True
 	while(match_not_found):
+		glob_x, glob_y = compute_global_coord_client(cursor_accept_match[0], cursor_accept_match[1])
 		pyautogui.click(x=glob_x, y=glob_y, clicks=1, interval=0, button='left')
 		time.sleep(1)
 		match_not_found = not checkIfProcessRunning('League of Legends')
+		glob_x, glob_y = compute_global_coord_client(cursor_find_match[0], cursor_find_match[1])
+		pyautogui.click(x=glob_x, y=glob_y, clicks=1, interval=0, button='left')
+		time.sleep(0.5)
 	print('Match accepted')
 	time.sleep(7)
 
@@ -292,6 +291,7 @@ def detect_champ_name(name_img):
 		scaler = scaler + 1
 		name_crop = name_img.resize((w*scaler, h*scaler))
 		detected_name = pytesseract.image_to_string(name_crop)
+	print(scaler)
 	return detected_name
 
 def get_store_champs():
@@ -342,19 +342,25 @@ def checkIfProcessRunning(processName):
 time.sleep(2)
 while True:
 	planning_done = False
+	premature_end = False
 	stage = 0
 	get_champ_list()
 	grab_client_screen()
-	find_match()
-	accept_match()
+	find_accept_match()
 	check_match_loaded()
 	start_time = time.time()
 	while True:
 		time.sleep(0.5)
-		if not check_planning() and planning_done:
+		is_planning = False
+		try:
+			is_planning = check_planning()
+		except:
+			premature_end = True
+			break
+		if not is_planning and planning_done:
 			planning_done = False
 			print('Planning done')
-		if check_planning() and not planning_done:
+		if is_planning and not planning_done:
 			print('Planning start: buying champs')
 			print(get_round(stage))
 			print(get_store_champs())
@@ -373,12 +379,13 @@ while True:
 			time.sleep(10)
 		current_time = time.time()
 		elapsed_time = current_time-start_time
-		if elapsed_time > 600:
+		if elapsed_time > 1000:
 			print('Time:')
 			print(elapsed_time/60)
 		if (elapsed_time >= 1260):
 			break
-	surrender()
+	if not premature_end:
+		surrender()
 	while check_notif():
 		close_notif()
 	play_again()
