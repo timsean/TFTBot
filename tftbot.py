@@ -139,6 +139,7 @@ def find_accept_match():
 			glob_x, glob_y = compute_global_coord_client(cursor_confirm[0], cursor_confirm[1])
 			pyautogui.click(x=glob_x, y=glob_y, clicks=1, interval=0, button='left')
 			time.sleep(1)
+			start_queue_time = time.time()
 	print('Match accepted')
 	time.sleep(7)
 
@@ -381,6 +382,7 @@ while True:
 			print('Planning done')
 		if is_planning and not planning_done:
 			print('Planning start: buying champs')
+			time.sleep(1)
 			print(get_round(stage))
 			print(get_store_champs())
 			buy_champ()
@@ -395,7 +397,7 @@ while True:
 				full_level_up()
 				print('Leveled up at stage 10/12')
 			print(stage)
-			time.sleep(10)
+			time.sleep(5)
 		current_time = time.time()
 		elapsed_time = current_time-start_time
 		if elapsed_time > 1000:
