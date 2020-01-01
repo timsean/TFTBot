@@ -1,4 +1,5 @@
 # Dependencies: PyAutoGUI, psutil, pywin32, PIL, pytesseract (google's OCR package)
+import os, subprocess
 import pyautogui
 import psutil
 import time
@@ -19,6 +20,9 @@ game_w = 0
 game_h = 0
 
 # Define cursor locations
+cursor_play = (9.5, 5.5)
+cursor_tft = (48.75, 28.9)
+cursor_confirm = (42, 96)
 cursor_find_match = (42, 95)
 cursor_accept_match = (50, 77)
 cursor_close_notif = (50, 94)
@@ -107,10 +111,11 @@ def close_notif():
 
 def find_accept_match():
 	# Spam the accept match button until the actual game starts
-	global cursor_accept_match, cursor_find_match
+	global cursor_accept_match, cursor_find_match, cursor_play, cursor_tft, cursor_confirm
 	glob_x, glob_y = compute_global_coord_client(cursor_find_match[0], cursor_find_match[1])
 	pyautogui.click(x=glob_x, y=glob_y, clicks=1, interval=0, button='left')
 	print('Finding match')
+	start_queue_time = time.time()
 	match_not_found = True
 	while(match_not_found):
 		glob_x, glob_y = compute_global_coord_client(cursor_accept_match[0], cursor_accept_match[1])
@@ -120,6 +125,20 @@ def find_accept_match():
 		glob_x, glob_y = compute_global_coord_client(cursor_find_match[0], cursor_find_match[1])
 		pyautogui.click(x=glob_x, y=glob_y, clicks=1, interval=0, button='left')
 		time.sleep(0.5)
+		if time.time() - start_queue_time > 300:
+			os.system("taskkill /f /im  LeagueClient.exe")
+			time.sleep(5)
+			subprocess.Popen(["E:/Riot Games/League of Legends/LeagueClient.exe"])
+			time.sleep(15)
+			glob_x, glob_y = compute_global_coord_client(cursor_play[0], cursor_play[1])
+			pyautogui.click(x=glob_x, y=glob_y, clicks=1, interval=0, button='left')
+			time.sleep(1)
+			glob_x, glob_y = compute_global_coord_client(cursor_tft[0], cursor_tft[1])
+			pyautogui.click(x=glob_x, y=glob_y, clicks=1, interval=0, button='left')
+			time.sleep(1)
+			glob_x, glob_y = compute_global_coord_client(cursor_confirm[0], cursor_confirm[1])
+			pyautogui.click(x=glob_x, y=glob_y, clicks=1, interval=0, button='left')
+			time.sleep(1)
 	print('Match accepted')
 	time.sleep(7)
 
