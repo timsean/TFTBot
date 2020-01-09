@@ -21,7 +21,7 @@ game_h = 0
 
 # Define cursor locations
 cursor_play = (9.5, 5.5)
-cursor_tft = (48.75, 28.9)
+cursor_tft = (68.5, 28.9)
 cursor_confirm = (42, 96)
 cursor_find_match = (42, 95)
 cursor_accept_match = (50, 77)
@@ -111,7 +111,7 @@ def close_notif():
 
 def find_accept_match():
 	# Spam the accept match button until the actual game starts
-	global cursor_accept_match, cursor_find_match, cursor_play, cursor_tft, cursor_confirm
+	global cursor_accept_match, cursor_find_match
 	glob_x, glob_y = compute_global_coord_client(cursor_find_match[0], cursor_find_match[1])
 	pyautogui.click(x=glob_x, y=glob_y, clicks=1, interval=0, button='left')
 	print('Finding match')
@@ -126,22 +126,30 @@ def find_accept_match():
 		pyautogui.click(x=glob_x, y=glob_y, clicks=1, interval=0, button='left')
 		time.sleep(0.5)
 		if time.time() - start_queue_time > 300:
-			os.system("taskkill /f /im  LeagueClient.exe")
-			time.sleep(5)
-			subprocess.Popen(["E:/Riot Games/League of Legends/LeagueClient.exe"])
-			time.sleep(15)
-			glob_x, glob_y = compute_global_coord_client(cursor_play[0], cursor_play[1])
-			pyautogui.click(x=glob_x, y=glob_y, clicks=1, interval=0, button='left')
-			time.sleep(1)
-			glob_x, glob_y = compute_global_coord_client(cursor_tft[0], cursor_tft[1])
-			pyautogui.click(x=glob_x, y=glob_y, clicks=1, interval=0, button='left')
-			time.sleep(1)
-			glob_x, glob_y = compute_global_coord_client(cursor_confirm[0], cursor_confirm[1])
-			pyautogui.click(x=glob_x, y=glob_y, clicks=1, interval=0, button='left')
-			time.sleep(1)
+			restart_client()
 			start_queue_time = time.time()
 	print('Match accepted')
 	time.sleep(7)
+
+def restart_client():
+	global cursor_play, cursor_tft, cursor_confirm
+	os.system("taskkill /f /im  LeagueClient.exe")
+	time.sleep(5)
+	subprocess.Popen(["E:/Riot Games/League of Legends/LeagueClient.exe"])
+	while not checkIfProcessRunning('LeagueClient.exe'):
+		time.sleep(1)
+	print('League client restarted')
+	time.sleep(20)
+	grab_client_screen()
+	glob_x, glob_y = compute_global_coord_client(cursor_play[0], cursor_play[1])
+	pyautogui.click(x=glob_x, y=glob_y, clicks=1, interval=0, button='left')
+	time.sleep(1)
+	glob_x, glob_y = compute_global_coord_client(cursor_tft[0], cursor_tft[1])
+	pyautogui.click(x=glob_x, y=glob_y, clicks=1, interval=0, button='left')
+	time.sleep(1)
+	glob_x, glob_y = compute_global_coord_client(cursor_confirm[0], cursor_confirm[1])
+	pyautogui.click(x=glob_x, y=glob_y, clicks=1, interval=0, button='left')
+	time.sleep(1)
 
 def surrender():
 	# Forfeit
