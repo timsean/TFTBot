@@ -141,15 +141,28 @@ def restart_client():
 	print('League client restarted')
 	time.sleep(20)
 	grab_client_screen()
-	glob_x, glob_y = compute_global_coord_client(cursor_play[0], cursor_play[1])
-	pyautogui.click(x=glob_x, y=glob_y, clicks=1, interval=0, button='left')
-	time.sleep(1)
-	glob_x, glob_y = compute_global_coord_client(cursor_tft[0], cursor_tft[1])
-	pyautogui.click(x=glob_x, y=glob_y, clicks=1, interval=0, button='left')
-	time.sleep(1)
-	glob_x, glob_y = compute_global_coord_client(cursor_confirm[0], cursor_confirm[1])
-	pyautogui.click(x=glob_x, y=glob_y, clicks=1, interval=0, button='left')
-	time.sleep(1)
+	if not check_is_in_lobby():
+		glob_x, glob_y = compute_global_coord_client(cursor_play[0], cursor_play[1])
+		pyautogui.click(x=glob_x, y=glob_y, clicks=1, interval=0, button='left')
+		time.sleep(1)
+		glob_x, glob_y = compute_global_coord_client(cursor_tft[0], cursor_tft[1])
+		pyautogui.click(x=glob_x, y=glob_y, clicks=1, interval=0, button='left')
+		time.sleep(1)
+		glob_x, glob_y = compute_global_coord_client(cursor_confirm[0], cursor_confirm[1])
+		pyautogui.click(x=glob_x, y=glob_y, clicks=1, interval=0, button='left')
+		time.sleep(1)
+
+def check_is_in_lobby():
+	# Check if the match is loaded
+	global client_w, client_h
+	color_check_loc1 = (87.25, 16.55)
+	rgb = (240,230,210)
+	client_scr = grab_client_screen()
+	client_scr_pixels = client_scr.load()
+	color1 = client_scr_pixels[int(color_check_loc1[0]*client_w*0.01), int(color_check_loc1[1]*client_h*0.01)]
+	color1_diff = (color1[0] - rgb[0])**2 + (color1[1] - rgb[1])**2 + (color1[2] - rgb[2])**2
+	is_in_lobby = color1_diff < 300
+	return is_in_lobby
 
 def surrender():
 	# Forfeit
