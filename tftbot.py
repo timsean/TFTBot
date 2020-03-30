@@ -10,6 +10,14 @@ import xml.dom.minidom
 
 pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
 
+import cv2
+from os import listdir
+from os.path import isfile, join
+from matplotlib import pyplot as plt
+import numpy as np
+import shopdetectlib as sd
+
+
 client_x = 0
 client_y = 0
 client_w = 0
@@ -41,7 +49,11 @@ rounds_list = [\
 	['p', 'p', 'p', 'c', 'p', 'p', 'm'],\
 	['p', 'p', 'p', 'c', 'p', 'p', 'm']]
 
-champ_list = []
+# Prepare for Shop Detection
+train_dir = 'champ_shop_images'
+database = sd.get_champ_database(train_dir)
+
+
 
 def grab_client_screen():
 	global client_x, client_y, client_w, client_h
@@ -335,36 +347,30 @@ def detect_champ_name(name_img):
 	print(scaler)
 	return detected_name
 
+
 def get_store_champs():
 	game_scr = grab_game_screen()
-	game_scr = ImageOps.invert(game_scr.convert('L'))
-	champ_names = ['','','','','']
+	game_scr = cv2.cvtColor(np.array(game_scr), cv2.COLOR_BGR2GRAY)
 
-	crop_ul = (25.2,96.3)
-	crop_br = (32.2,98.9)
-	name_crop = crop_screen(game_scr, crop_ul, crop_br)
-	champ_names[0] = detect_champ_name(name_crop)
+	height = game_scr.shape[0]
+	width = game_scr.shape[1]
 
-	crop_ul = (35.6,96.3)
-	crop_br = (42.6,98.9)
-	name_crop = crop_screen(game_scr, crop_ul, crop_br)
-	champ_names[1] = detect_champ_name(name_crop)
+	shop_loc_h = np.floor(np.dot([0.8542, 1] , height));
+	shop_loc_w = np.floor(np.dot([0.2461,0.7734] , width )) 
+	shop_div = np.ceil(np.linspace(shop_loc_w[0],shop_loc_w[1],6))
+	shop_space = int(shop_div[1] - shop_div[0])
 
-	crop_ul = (46.0,96.3)
-	crop_br = (53.0,98.9)
-	name_crop = crop_screen(game_scr, crop_ul, crop_br)
-	champ_names[2] = detect_champ_name(name_crop)
+	champ_store = ''
+	for k in range(5):
+		h1 = int(shop_loc_h[0])
+		h2 = int(shop_loc_h[1])
+		w1 = int(shop_div[k])
+		slot = game_scr[ h1:h2 , w1:(w1 + shop_space)]
+		score = sd.score_champ_in_shop(slot , database)
+		predict = sd.classify_champ(score,train_dir)
+		champ_store = champ_store + predict + f' {max(score):.2f} '
+	return champ_store
 
-	crop_ul = (56.4,96.3)
-	crop_br = (63.4,98.9)
-	name_crop = crop_screen(game_scr, crop_ul, crop_br)
-	champ_names[3] = detect_champ_name(name_crop)
-
-	crop_ul = (66.8,96.3)
-	crop_br = (73.8,98.9)
-	name_crop = crop_screen(game_scr, crop_ul, crop_br)
-	champ_names[4] = detect_champ_name(name_crop)
-	return champ_names
 
 def checkIfProcessRunning(processName):
     '''
@@ -380,14 +386,19 @@ def checkIfProcessRunning(processName):
             pass
     return False;
 
+
+
+#################
+##### main ######
+#################
 time.sleep(2)
 while True:
 	planning_done = False
 	premature_end = False
 	stage = 0
-	get_champ_list()
-	grab_client_screen()
-	find_accept_match()
+	# get_champ_list()
+	# grab_client_screen()
+	# find_accept_match()
 	check_match_loaded()
 	start_time = time.time()
 	while True:
@@ -430,7 +441,7 @@ while True:
 		surrender()
 	while check_notif():
 		close_notif()
-	play_again()
+	# play_again()
 
 
 #random_move()
