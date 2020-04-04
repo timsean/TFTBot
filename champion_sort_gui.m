@@ -108,6 +108,7 @@ uicontrol('Style','Pushbutton','String','Undo','Callback',@undo, ...
             subplot(1,2,1)
             imshow(curr_file)
             
+            completed.String = sprintf('Completed: %d', c-3);
         end
     end
 
