@@ -74,6 +74,9 @@ uicontrol('Style','Pushbutton','String','Undo','Callback',@undo, ...
         disp(select_champ)
         
         dest_loc = ['champion_model/',select_champ, '/'];
+        if ~exist(dest_loc, 'dir')
+            mkdir(dest_loc)
+        end
         L = length(dir(dest_loc)) + 1;
         
         dest_file = [dest_loc, num2str(L), '.png'];
