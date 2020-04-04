@@ -30,6 +30,14 @@ dest_file = [dir_str,directory(c).name];
 imshow(curr_file)
 
 
+completed = uicontrol('Style','Text','String', 'Completed: 0' ,...
+            'units','normalized','position', [0.1 0.95 0.1 0.05],...
+            'Fontsize',15);
+
+remain_str = sprintf('Total: %d', length(directory));
+remaining = uicontrol('Style','Text','String', remain_str  ,...
+    'units','normalized','position', [0.2 0.95 0.1 0.05],...
+    'Fontsize',15);
 
 x = [0.55, 0.68, 0.81];
 y = linspace(0,1,19);
@@ -79,6 +87,9 @@ uicontrol('Style','Pushbutton','String','Undo','Callback',@undo, ...
             curr_file = [dir_str ,directory(c).name];
             subplot(1,2,1)
             imshow(curr_file)
+            
+            completed.String = sprintf('Completed: %d', c-3);
+            
         catch
             delete(MyFigure)
         end
@@ -100,24 +111,4 @@ uicontrol('Style','Pushbutton','String','Undo','Callback',@undo, ...
         end
     end
 
-
-%     function delete(~,~) 
-% 
-%         try
-%             c = c+1;
-%             curr_file = [dir_str ,directory(c).name];
-%             subplot(1,2,1)
-%             imshow(curr_file)
-%         catch
-%             fprintf('Complete!\n')
-%         end
-% 
-%     end
-
-
-
-
-
-%password is 8463926
-%output rubeus hagrid
 end
