@@ -13,9 +13,13 @@ pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesse
 import cv2
 from os import listdir
 from os.path import isfile, join
+from matplotlib import pyplot as plt
 import numpy as np
 import shopdetectlib as sd
 
+## import my files
+import tft_detect_numbers_lib as dn
+import math
 
 client_x = 0
 client_y = 0
@@ -33,7 +37,7 @@ cursor_confirm = (42, 96)
 cursor_find_match = (42, 95)
 cursor_accept_match = (50, 77)
 cursor_close_notif = (50, 94)
-cursor_surrender = (45, 58.25)
+cursor_surrender = (45, 47)
 cursor_level_up = (19, 90)
 check_notif_pixel = (1, 99)
 pet_home = (23, 63)
@@ -48,11 +52,12 @@ rounds_list = [\
 	['p', 'p', 'p', 'c', 'p', 'p', 'm'],\
 	['p', 'p', 'p', 'c', 'p', 'p', 'm']]
 
+champ_list = []
+
+
 # Prepare for Shop Detection
 train_dir = 'champ_shop_images'
 database = sd.get_champ_database(train_dir)
-
-
 
 def grab_client_screen():
 	global client_x, client_y, client_w, client_h
@@ -128,6 +133,9 @@ def find_accept_match():
 	print('Finding match')
 	start_queue_time = time.time()
 	match_not_found = True
+
+	restarted = False
+
 	while(match_not_found):
 		glob_x, glob_y = compute_global_coord_client(cursor_accept_match[0], cursor_accept_match[1])
 		pyautogui.click(x=glob_x, y=glob_y, clicks=1, interval=0, button='left')
@@ -137,8 +145,15 @@ def find_accept_match():
 		pyautogui.click(x=glob_x, y=glob_y, clicks=1, interval=0, button='left')
 		time.sleep(0.5)
 		if time.time() - start_queue_time > 300:
-			restart_client()
-			start_queue_time = time.time()
+			if not restarted:
+				restart_client()
+				start_queue_time = time.time()
+				restarted = True
+			else:
+				restart_client_and_click()
+				start_queue_time = time.time()
+				restarted = False
+
 	print('Match accepted')
 	time.sleep(7)
 
@@ -146,34 +161,33 @@ def restart_client():
 	global cursor_play, cursor_tft, cursor_confirm
 	os.system("taskkill /f /im  LeagueClient.exe")
 	time.sleep(5)
-	subprocess.Popen(["E:/Riot Games/League of Legends/LeagueClient.exe"])
+	subprocess.Popen(["C:/Riot Games/League of Legends/LeagueClient.exe"])
 	while not checkIfProcessRunning('LeagueClient.exe'):
 		time.sleep(1)
 	print('League client restarted')
-	time.sleep(20)
+	time.sleep(30)
 	grab_client_screen()
-	if not check_is_in_lobby():
-		glob_x, glob_y = compute_global_coord_client(cursor_play[0], cursor_play[1])
-		pyautogui.click(x=glob_x, y=glob_y, clicks=1, interval=0, button='left')
-		time.sleep(1)
-		glob_x, glob_y = compute_global_coord_client(cursor_tft[0], cursor_tft[1])
-		pyautogui.click(x=glob_x, y=glob_y, clicks=1, interval=0, button='left')
-		time.sleep(1)
-		glob_x, glob_y = compute_global_coord_client(cursor_confirm[0], cursor_confirm[1])
-		pyautogui.click(x=glob_x, y=glob_y, clicks=1, interval=0, button='left')
-		time.sleep(1)
 
-def check_is_in_lobby():
-	# Check if the match is loaded
-	global client_w, client_h
-	color_check_loc1 = (87.25, 16.55)
-	rgb = (240,230,210)
-	client_scr = grab_client_screen()
-	client_scr_pixels = client_scr.load()
-	color1 = client_scr_pixels[int(color_check_loc1[0]*client_w*0.01), int(color_check_loc1[1]*client_h*0.01)]
-	color1_diff = (color1[0] - rgb[0])**2 + (color1[1] - rgb[1])**2 + (color1[2] - rgb[2])**2
-	is_in_lobby = color1_diff < 300
-	return is_in_lobby
+def restart_client_and_click():
+	global cursor_play, cursor_tft, cursor_confirm
+	os.system("taskkill /f /im  LeagueClient.exe")
+	time.sleep(5)
+	subprocess.Popen(["C:/Riot Games/League of Legends/LeagueClient.exe"])
+	while not checkIfProcessRunning('LeagueClient.exe'):
+		time.sleep(1)
+	print('League client restarted')
+	time.sleep(30)
+	grab_client_screen()
+	glob_x, glob_y = compute_global_coord_client(cursor_play[0], cursor_play[1])
+	pyautogui.click(x=glob_x, y=glob_y, clicks=1, interval=0, button='left')
+	time.sleep(1)
+	glob_x, glob_y = compute_global_coord_client(cursor_tft[0], cursor_tft[1])
+	pyautogui.click(x=glob_x, y=glob_y, clicks=1, interval=0, button='left')
+	time.sleep(1)
+	glob_x, glob_y = compute_global_coord_client(cursor_confirm[0], cursor_confirm[1])
+	pyautogui.click(x=glob_x, y=glob_y, clicks=1, interval=0, button='left')
+	time.sleep(1)
+
 
 def surrender():
 	# Forfeit
@@ -346,9 +360,9 @@ def detect_champ_name(name_img):
 	print(scaler)
 	return detected_name
 
-
 def get_store_champs():
 	game_scr = grab_game_screen()
+	# game_scr = ImageOps.invert(game_scr.convert('L'))
 	game_scr = cv2.cvtColor(np.array(game_scr), cv2.COLOR_BGR2GRAY)
 
 	height = game_scr.shape[0]
@@ -370,7 +384,6 @@ def get_store_champs():
 		champ_store = champ_store + predict + f' {max(score):.2f} '
 	return champ_store
 
-
 def checkIfProcessRunning(processName):
     '''
     Check if there is any running process that contains the given name processName.
@@ -385,65 +398,178 @@ def checkIfProcessRunning(processName):
             pass
     return False;
 
-
-
-#################
-##### main ######
-#################
+## new main
 time.sleep(2)
 while True:
-	planning_done = False
-	premature_end = False
-	stage = 0
-	# get_champ_list()
-	# grab_client_screen()
-	# find_accept_match()
+
+	### find game
+	grab_client_screen()
+	find_accept_match()
 	check_match_loaded()
 	start_time = time.time()
+
+	### play game
+
+	# intialization
+	oldstage = '' 
+	old_money = -1
+	current_money = 0
+	money_template = dn.get_money_template();
+	stage_template = dn.get_stage_template();
+	stage_loc = 0; # start looking location for stage 1
+
 	while True:
-		time.sleep(0.5)
-		is_planning = False
-		try:
-			is_planning = check_planning()
-		except:
-			premature_end = True
+		# get frame
+		frame = grab_game_screen()
+		frame = cv2.cvtColor(np.array(frame), cv2.COLOR_BGR2GRAY)		
+
+		# read stage
+		stage = dn.get_current_stage(frame,stage_template,stage_loc);
+
+		# if stage not found, probably on stage 2 or later now
+		if not stage:
+			stage_loc = 1
+			stage = dn.get_current_stage(frame,stage_template,stage_loc);
+
+		stage_parta = int(stage[0])
+		stage_partb = int(stage[2])
+
+
+		## read money on non stage carousels
+		if stage_parta == 1:
+			if stage_partb >= 2:
+				current_money = dn.get_current_money(frame,money_template);
+
+		else:
+			if stage_partb != 4:
+				current_money = dn.get_current_money(frame,money_template);
+
+
+		# display if there is change in money
+		if current_money != old_money:
+			old_money = current_money
+			print('gold:' + str(current_money))
+
+
+		# if new stage, do stuff
+		if stage != oldstage:
+			# replace old stage
+			oldstage = stage
+
+			# display stage
+			print('new stage: ' + stage)
+
+			# buy champs except on stage x-4, for x>=2, and not 1-1.
+			stage_parta = int(stage[0])
+			stage_partb = int(stage[2])
+
+			if stage_parta == 1:
+				if stage_partb >= 2:
+					print("Buying Champions:")
+					buy_champ()
+			else:
+				if stage_partb != 4:
+					print("Buying Champions:")
+					buy_champ()
+
+
+			# if greater than 50 gold, level up but dont get less than 50
+			if current_money >= 50:
+				num_levelup = int((current_money-50)/4)
+
+				print("Leveling down to ~50 gold:")
+				for i in range(0,num_levelup-1):
+					level_up()
+
+
+			# at stage 4-1, all in level.
+			if stage == '3-3' or stage == '3-5':
+				num_levelup = int(current_money/4)
+
+				print("Leveling down all the way:")
+				for i in range(0,num_levelup-1):
+					level_up()
+		# else, dont do anything.
+
+
+		# end stage. leave loop and surrender 
+		if stage[0] == '4':
 			break
-		if not is_planning and planning_done:
-			planning_done = False
-			print('Planning done')
-		if is_planning and not planning_done:
-			print('Planning start: buying champs')
-			time.sleep(1)
-			print(get_round(stage))
-			print(get_store_champs())
-			buy_champ()
-			planning_done = True
-			stage = stage + 1
-			if (stage == 7):
-				time.sleep(1)
-				level_up()
-				print('Leveled up at stage 7')
-			if (stage == 10 or stage == 13):
-				time.sleep(1)
-				full_level_up()
-				print('Leveled up at stage 10/12')
-			print(stage)
-			time.sleep(5)
-		current_time = time.time()
-		elapsed_time = current_time-start_time
-		if elapsed_time > 1000:
-			print('Time:')
-			print(elapsed_time/60)
-		if (elapsed_time >= 1260):
-			break
-	if not premature_end:
-		surrender()
+
+		# frame refresh rate. can increase time to decrease amount of processing	
+		time.sleep(1)	
+			
+	# Surrender and restart Game
+	print('Surrendering...')
+	surrender()
+	printing('Checking Notifications...')
 	while check_notif():
+		grab_client_screen()
 		close_notif()
-	# play_again()
+	play_again()
 
 
-#random_move()
+	
+
+	
+
+# ### old main
+# time.sleep(2)
+# while True:
+# 	planning_done = False
+# 	premature_end = False
+# 	stage = 0
+# 	get_champ_list()
+# 	grab_client_screen()
+# 	find_accept_match()
+# 	check_match_loaded()
+# 	start_time = time.time()
+# 	while True:
+
+# 		print('hello')
+# 		time.sleep(0.5)
+# 		is_planning = True
+# 		try:
+# 			is_planning = check_planning()
+# 		except:
+# 			premature_end = True
+# 			break
+# 		if not is_planning and planning_done:
+# 			planning_done = False
+# 			print('Planning done')
+# 		if is_planning and not planning_done:
+# 			print('Planning start: buying champs')
+# 			time.sleep(1)
+# 			# print(get_round(stage))
+# 			print(get_store_champs())
+# 			buy_champ()
+# 			planning_done = True
+# 			stage = stage + 1
+# 			if (stage == 7):
+# 				time.sleep(1)
+# 				level_up()
+# 				print('Leveled up at stage 7')
+# 			if (stage == 10 or stage == 13):
+# 				time.sleep(1)
+# 				full_level_up()
+# 				print('Leveled up at stage 10/12')
+# 			print(stage)
+# 			time.sleep(5)
+# 		current_time = time.time()
+# 		elapsed_time = current_time-start_time
+# 		if elapsed_time > 1200:
+# 			print('Time:')
+# 			print(elapsed_time/60)
+# 		if (elapsed_time >= 1260):
+# 			break
+# 	if not premature_end:
+# 		surrender()
+# 	# while check_notif():
+# 	# 	grab_client_screen()
+# 	# 	close_notif()
+# 	# play_again()
+
+
 
 
 
