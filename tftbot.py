@@ -478,7 +478,7 @@ while True:
 				num_levelup = int((current_money-50)/4)
 
 				print("Leveling down to ~50 gold:")
-				for i in range(0,num_levelup-1):
+				for i in range(0,num_levelup):
 					level_up()
 
 
@@ -487,7 +487,7 @@ while True:
 				num_levelup = int(current_money/4)
 
 				print("Leveling down all the way:")
-				for i in range(0,num_levelup-1):
+				for i in range(0,num_levelup):
 					level_up()
 		# else, dont do anything.
 
@@ -502,7 +502,7 @@ while True:
 	# Surrender and restart Game
 	print('Surrendering...')
 	surrender()
-	printing('Checking Notifications...')
+	print('Checking Notifications...')
 	while check_notif():
 		grab_client_screen()
 		close_notif()
