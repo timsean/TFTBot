@@ -108,8 +108,8 @@ def get_current_stage(frame,template,location):
 	if debug == 0:
 		h1 = h1 +30;
 		h2 = h2 +30;
-		w1 = w1 -20;
-		w2 = w2 -20;	
+		w1 = w1 -40;
+		w2 = w2 -40;	
 
 
 	## binarize image and label islands
@@ -155,7 +155,7 @@ def get_current_stage(frame,template,location):
 			stage_str = str(digits[0]) + '-' + str(digits[1])
 		else:
 			stage_str = str(digits[1]) + '-' + str(digits[0])
-
+		
 	return stage_str
 
 
@@ -177,6 +177,8 @@ def get_stage_template():
 
 	return template	
 
+
+
 ## start reading video
 
 ####  not calling because its now a library for main
@@ -191,9 +193,10 @@ def get_stage_template():
 # width = int(cap.get(3))
 # height = int(cap.get(4))
 
-# minute = 15;
-# second = 30;
+# minute = 22;
+# second = 31.3;
 # timestamp = (minute*60 + second)*fps
+# # timestamp = 1
 
 # # intialization
 # oldstage = '' 
@@ -236,5 +239,5 @@ def get_stage_template():
 
 # 	# plt.imshow(frame)
 # 	# plt.show()
-
-# 	timestamp = timestamp + 60*fps
+# 	check_exitnow(frame)
+# 	timestamp = timestamp + 1

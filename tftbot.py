@@ -21,6 +21,7 @@ import shopdetectlib as sd
 import tft_detect_numbers_lib as dn
 import math
 
+pyautogui.FAILSAFE= False
 client_x = 0
 client_y = 0
 client_w = 0
@@ -41,6 +42,7 @@ cursor_surrender = (45, 47)
 cursor_level_up = (19, 90)
 check_notif_pixel = (1, 99)
 pet_home = (23, 63)
+
 
 # Rounds
 rounds_list = [\
@@ -398,7 +400,55 @@ def checkIfProcessRunning(processName):
             pass
     return False;
 
-## new main
+def check_exitnow(frame):
+	
+	# initialize for clicking exit now
+	cursor_exit_now = (46,50)
+	glob_x, glob_y = compute_global_coord_game(cursor_exit_now[0], cursor_exit_now[1])
+	found = 0 
+
+	# template of exit now
+	exitnow = cv2.cvtColor(cv2.imread(f'exitnow.png'), cv2.COLOR_BGR2GRAY) 
+
+	# check area of where exit now is
+	height = frame.shape[0]
+	width = frame.shape[1]
+
+	h1 = int(np.floor(0.4720 * height));
+	h2 = int(np.floor(0.5192 * height));
+	
+	w1 = int(np.floor(0.3550 * width));
+	w2 = int(np.floor(0.4900 * width));
+
+	## if reading frames from game, include buffer from edges of window	
+	debug = 0
+	if debug == 0:
+		h1 = h1 +30;
+		h2 = h2 +30;
+
+	gray = frame
+	exit_area = gray[ h1:h2 , w1:w2]
+	exit_area=  np.pad(exit_area,10,'constant',constant_values = (0))
+
+	# compare 
+	method = cv2.TM_CCOEFF_NORMED
+	res = cv2.matchTemplate(exit_area,exitnow,method)
+	confidence = np.amax(res)
+	threshold = 0.3
+	if confidence > threshold:
+		print('Exiting now...')
+		pyautogui.mouseDown(x=glob_x, y=glob_y, button='left')
+		time.sleep(0.05)
+		pyautogui.mouseUp(x=glob_x, y=glob_y, button='left')
+		time.sleep(0.25)
+		found = 1
+		
+	return found
+
+###################################################################################################
+########################################## MAIN ###################################################
+###################################################################################################
+
 time.sleep(2)
 while True:
 
@@ -427,17 +477,19 @@ while True:
 		stage = dn.get_current_stage(frame,stage_template,stage_loc);
 
 		# if stage not found, probably on stage 2 or later now
-		if not stage:
+		if stage == '' and stage_loc == 0:
 			stage_loc = 1
 			stage = dn.get_current_stage(frame,stage_template,stage_loc);
-
+		elif stage == '' and stage_loc == 1:
+			stage = '0-0'
+			
 		stage_parta = int(stage[0])
 		stage_partb = int(stage[2])
 
 
 		## read money on non stage carousels
 		if stage_parta == 1:
-			if stage_partb >= 2:
+			if stage_partb > 2:
 				current_money = dn.get_current_money(frame,money_template);
 
 		else:
@@ -464,14 +516,27 @@ while True:
 			stage_partb = int(stage[2])
 
 			if stage_parta == 1:
-				if stage_partb >= 2:
+				if stage_partb > 2:
 					print("Buying Champions:")
 					buy_champ()
+
+					frame = grab_game_screen()
+					frame = cv2.cvtColor(np.array(frame), cv2.COLOR_BGR2GRAY)	
+					current_money = dn.get_current_money(frame,money_template);
+
 			else:
 				if stage_partb != 4:
 					print("Buying Champions:")
 					buy_champ()
 
+					frame = grab_game_screen()
+					frame = cv2.cvtColor(np.array(frame), cv2.COLOR_BGR2GRAY)	
+					current_money = dn.get_current_money(frame,money_template);
+
+			# display gold again if new amount of money
+			if current_money != old_money:
+				old_money = current_money
+				print('gold:' + str(current_money))		
 
 			# if greater than 50 gold, level up but dont get less than 50
 			if current_money >= 50:
@@ -482,8 +547,9 @@ while True:
 					level_up()
 
 
+
 			# at stage 4-1, all in level.
-			if stage == '3-3' or stage == '3-5':
+			if stage == '4-2' or stage == '4-5' or stage == '5-1':
 				num_levelup = int(current_money/4)
 
 				print("Leveling down all the way:")
@@ -493,15 +559,24 @@ while True:
 
 
 		# end stage. leave loop and surrender 
-		if stage[0] == '4':
+		if stage == '5-4':
+			time.sleep(5)
 			break
+
+		# check if died. leave if died
+		died = check_exitnow(frame)
+		if  died == 1:
+			break 
 
 		# frame refresh rate. can increase time to decrease amount of processing	
 		time.sleep(1)	
 			
-	# Surrender and restart Game
-	print('Surrendering...')
-	surrender()
+	# Surrender if 5-1.
+	if died == 0:
+		print('Surrendering...')
+		surrender()
+
+	# restart Game
 	print('Checking Notifications...')
 	while check_notif():
 		grab_client_screen()
@@ -510,70 +585,3 @@ while True:
 
 
 	
-
-	
-
-# ### old main
-# time.sleep(2)
-# while True:
-# 	planning_done = False
-# 	premature_end = False
-# 	stage = 0
-# 	get_champ_list()
-# 	grab_client_screen()
-# 	find_accept_match()
-# 	check_match_loaded()
-# 	start_time = time.time()
-# 	while True:
-
-# 		print('hello')
-# 		time.sleep(0.5)
-# 		is_planning = True
-# 		try:
-# 			is_planning = check_planning()
-# 		except:
-# 			premature_end = True
-# 			break
-# 		if not is_planning and planning_done:
-# 			planning_done = False
-# 			print('Planning done')
-# 		if is_planning and not planning_done:
-# 			print('Planning start: buying champs')
-# 			time.sleep(1)
-# 			# print(get_round(stage))
-# 			print(get_store_champs())
-# 			buy_champ()
-# 			planning_done = True
-# 			stage = stage + 1
-# 			if (stage == 7):
-# 				time.sleep(1)
-# 				level_up()
-# 				print('Leveled up at stage 7')
-# 			if (stage == 10 or stage == 13):
-# 				time.sleep(1)
-# 				full_level_up()
-# 				print('Leveled up at stage 10/12')
-# 			print(stage)
-# 			time.sleep(5)
-# 		current_time = time.time()
-# 		elapsed_time = current_time-start_time
-# 		if elapsed_time > 1200:
-# 			print('Time:')
-# 			print(elapsed_time/60)
-# 		if (elapsed_time >= 1260):
-# 			break
-# 	if not premature_end:
-# 		surrender()
-# 	# while check_notif():
-# 	# 	grab_client_screen()
-# 	# 	close_notif()
-# 	# play_again()
-
-
-
-
-
-# TODO:
-# Game time
-# Detecting planning phase and game phase
-# Gold detection
